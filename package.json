@@ -1,16 +1,52 @@
 {
-  "name": "dotbash",
-  "module": "src/cli.ts",
-  "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "commander": "^14.0.2",
-    "zod": "^4.1.13"
-  }
+	"name": "dotbash",
+	"version": "0.1.0",
+	"description": "A lightweight dotfiles manager that generates self-contained shell scripts",
+	"author": "Alin Ali Hassan <hassanalinali@gmail.com>",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/alinalihassan/dotbash"
+	},
+	"bugs": {
+		"url": "https://github.com/alinalihassan/dotbash/issues"
+	},
+	"homepage": "https://github.com/alinalihassan/dotbash#readme",
+	"type": "module",
+	"main": "build/cli.js",
+	"bin": {
+		"dotbash": "build/cli.js"
+	},
+	"files": [
+		"build",
+		"schema.json",
+		"README.md",
+		"LICENSE"
+	],
+	"scripts": {
+		"build": "bun run scripts/build.ts",
+		"prepublishOnly": "bun run build"
+	},
+	"keywords": [
+		"dotfiles",
+		"installation",
+		"setup",
+		"configuration",
+		"shell",
+		"bash",
+		"symlinks"
+	],
+	"engines": {
+		"bun": "^1.3.4"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"commander": "^14.0.2",
+		"zod": "^4.1.13"
+	}
 }

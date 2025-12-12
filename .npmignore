@@ -1,0 +1,28 @@
+# Source files
+src/
+scripts/
+
+# Development files
+tsconfig.json
+.gitignore
+.ignore
+bun.lock
+
+# Examples (optional - remove if you want to include)
+# dotbash.yaml
+# dotbash.json
+# install.sh
+
+# Build artifacts
+*.tsbuildinfo
+
+# IDE
+.idea
+.vscode
+
+# OS
+.DS_Store
+
+# Tests
+*.test.ts
+__tests__
