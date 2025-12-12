@@ -17,12 +17,23 @@ const DefaultsConfig = z
         relink: false,
         force: false,
       }),
+    shell: z
+      .object({
+        // When true, suppresses command output messages (default: false)
+        quiet: z.boolean().default(false),
+      })
+      .default({
+        quiet: false,
+      }),
   })
   .default({
     link: {
       create: false,
       relink: false,
       force: false,
+    },
+    shell: {
+      quiet: false,
     },
   });
 
@@ -56,6 +67,8 @@ const generateShell = (config: Config): string => {
   output += "set -e\n\n";
 
   output += generateLinks(config);
+  output += generatePackageManager(config);
+  output += generateShellCommands(config);
 
   return output;
 };
@@ -107,7 +120,91 @@ const generateLinks = (config: Config): string => {
     output += `echo "  ✓ Linked ${destination}"\n\n`;
   }
 
-  output += 'echo "All symlinks created successfully!"\n';
+  output += 'echo "All symlinks created successfully!"\n\n';
+
+  return output;
+};
+
+const generateShellCommands = (config: Config): string => {
+  let output = "";
+  const shellDefaults = config.defaults.shell;
+
+  // Generate shell commands
+  for (const shellCmd of config.shell) {
+    const description = shellCmd.description || "Running command";
+    const command = shellCmd.command;
+    const quiet = shellCmd.quiet ?? shellDefaults.quiet;
+
+    output += `# ${description}\n`;
+
+    if (!quiet) {
+      output += `echo "${description}..."\n`;
+    }
+
+    // Run the command with error handling
+    output += `if ${command}; then\n`;
+
+    if (!quiet) {
+      output += `  echo "  ✓ ${description} completed"\n`;
+    }
+
+    output += `else\n`;
+    output += `  echo "  ✗ Error: ${description} failed"\n`;
+    output += `  exit 1\n`;
+    output += `fi\n\n`;
+  }
+
+  if (config.shell.length > 0) {
+    output += 'echo "All shell commands completed successfully!"\n\n';
+  }
+
+  return output;
+};
+
+const generatePackageManager = (config: Config): string => {
+  let output = "";
+  const pkgMgr = config.packageManager;
+
+  // Check if running on macOS
+  output += `# Package Manager Setup\n`;
+  output += `if [[ "\$(uname)" == "Darwin" ]]; then\n`;
+
+  // Install Homebrew if needed
+  if (pkgMgr.installSelf) {
+    output += `  # Install Homebrew\n`;
+    output += `  echo "Checking for Homebrew..."\n`;
+    output += `  if command -v brew &>/dev/null; then\n`;
+    output += `    echo "  ✓ Homebrew already installed"\n`;
+    output += `  else\n`;
+    output += `    echo "  Installing Homebrew..."\n`;
+    output += `    if /bin/bash -c "\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then\n`;
+    output += `      echo "  ✓ Homebrew installed successfully"\n`;
+    output += `    else\n`;
+    output += `      echo "  ✗ Error: Failed to install Homebrew"\n`;
+    output += `      exit 1\n`;
+    output += `    fi\n`;
+    output += `  fi\n\n`;
+  }
+
+  // Install packages from Brewfile
+  if (pkgMgr.dependenciesFile && pkgMgr.dependenciesFile.trim() !== "") {
+    const brewfilePath = `\$(pwd)/${pkgMgr.dependenciesFile}`;
+    
+    output += `  # Install packages from Brewfile\n`;
+    output += `  if [ ! -e "${brewfilePath}" ]; then\n`;
+    output += `    echo "  ✗ Error: Brewfile not found: ${pkgMgr.dependenciesFile}"\n`;
+    output += `    exit 1\n`;
+    output += `  fi\n`;
+    output += `  echo "Installing packages from ${pkgMgr.dependenciesFile}..."\n`;
+    output += `  if brew bundle --file="${brewfilePath}"; then\n`;
+    output += `    echo "  ✓ Packages installed successfully"\n`;
+    output += `  else\n`;
+    output += `    echo "  ✗ Error: Failed to install packages"\n`;
+    output += `    exit 1\n`;
+    output += `  fi\n`;
+  }
+
+  output += `fi\n\n`;
 
   return output;
 };

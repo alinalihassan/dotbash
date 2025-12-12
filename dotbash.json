@@ -16,11 +16,11 @@
     "~/.config/opencode/opencode.jsonc": "opencode/opencode.jsonc",
     "~/Library/Application Support/lazygit/config.yml": "lazygit/config.yml"
   },
+  "packageManager": {
+    "installSelf": true,
+    "dependenciesFile": "brew/Brewfile"
+  },
   "shell": [
-    {
-      "description": "Install Brew",
-      "command": "command -v brew &>/dev/null || /bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
-    },
     {
       "description": "Set Fish as default shell",
       "command": "chsh -s $(which fish)"
@@ -29,8 +29,5 @@
       "description": "Install Fish Plugins",
       "command": "fish -c \"fisher update\""
     }
-  ],
-  "packageManager": {
-    "dependenciesFile": "brew/Brewfile"
-  }
+  ]
 }

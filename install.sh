@@ -108,3 +108,72 @@ ln -s "$(pwd)/lazygit/config.yml" "$HOME/Library/Application Support/lazygit/con
 echo "  ✓ Linked ~/Library/Application Support/lazygit/config.yml"
 
 echo "All symlinks created successfully!"
+
+# Package Manager Setup
+if [[ "$(uname)" == "Darwin" ]]; then
+  # Install Homebrew
+  echo "Checking for Homebrew..."
+  if command -v brew &>/dev/null; then
+    echo "  ✓ Homebrew already installed"
+  else
+    echo "  Installing Homebrew..."
+    if /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then
+      echo "  ✓ Homebrew installed successfully"
+    else
+      echo "  ✗ Error: Failed to install Homebrew"
+      exit 1
+    fi
+  fi
+
+  # Install packages from Brewfile
+  if [ ! -e "$(pwd)/brew/Brewfile" ]; then
+    echo "  ✗ Error: Brewfile not found: brew/Brewfile"
+    exit 1
+  fi
+  echo "Installing packages from brew/Brewfile..."
+  if brew bundle --file="$(pwd)/brew/Brewfile"; then
+    echo "  ✓ Packages installed successfully"
+  else
+    echo "  ✗ Error: Failed to install packages"
+    exit 1
+  fi
+fi
+
+# Install Brew
+echo "Install Brew..."
+if command -v brew &>/dev/null || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then
+  echo "  ✓ Install Brew completed"
+else
+  echo "  ✗ Error: Install Brew failed"
+  exit 1
+fi
+
+# Install Brew packages
+echo "Install Brew packages..."
+if brew bundle --file=./brew/Brewfile; then
+  echo "  ✓ Install Brew packages completed"
+else
+  echo "  ✗ Error: Install Brew packages failed"
+  exit 1
+fi
+
+# Set Fish as default shell
+echo "Set Fish as default shell..."
+if chsh -s $(which fish); then
+  echo "  ✓ Set Fish as default shell completed"
+else
+  echo "  ✗ Error: Set Fish as default shell failed"
+  exit 1
+fi
+
+# Install Fish Plugins
+echo "Install Fish Plugins..."
+if fish -c "fisher update"; then
+  echo "  ✓ Install Fish Plugins completed"
+else
+  echo "  ✗ Error: Install Fish Plugins failed"
+  exit 1
+fi
+
+echo "All shell commands completed successfully!"
+
