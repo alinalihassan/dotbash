@@ -1,3 +1,7 @@
+# Testing files
+dotbash.yaml
+install.sh
+
 # dependencies (bun install)
 node_modules
 
