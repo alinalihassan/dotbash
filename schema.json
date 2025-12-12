@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "defaults": {
+      "default": {
+        "link": {
+          "create": false,
+          "relink": false,
+          "force": false
+        },
+        "shell": {
+          "quiet": false
+        }
+      },
+      "type": "object",
+      "properties": {
+        "link": {
+          "default": {
+            "create": false,
+            "relink": false,
+            "force": false
+          },
+          "type": "object",
+          "properties": {
+            "create": {
+              "default": false,
+              "type": "boolean"
+            },
+            "relink": {
+              "default": false,
+              "type": "boolean"
+            },
+            "force": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "create",
+            "relink",
+            "force"
+          ],
+          "additionalProperties": false
+        },
+        "shell": {
+          "default": {
+            "quiet": false
+          },
+          "type": "object",
+          "properties": {
+            "quiet": {
+              "default": false,
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "quiet"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "link",
+        "shell"
+      ],
+      "additionalProperties": false
+    },
+    "link": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "shell": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "command": {
+            "type": "string"
+          },
+          "quiet": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "command",
+          "quiet"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "packageManager": {
+      "default": {
+        "installSelf": true,
+        "dependenciesFile": ""
+      },
+      "type": "object",
+      "properties": {
+        "installSelf": {
+          "default": true,
+          "type": "boolean"
+        },
+        "dependenciesFile": {
+          "default": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "installSelf",
+        "dependenciesFile"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "defaults",
+    "link",
+    "shell",
+    "packageManager"
+  ],
+  "additionalProperties": false
+}

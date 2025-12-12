@@ -1,4 +1,3 @@
-import { $ } from "bun";
 import { z } from "zod";
 
 const DefaultsConfig = z
@@ -37,23 +36,35 @@ const DefaultsConfig = z
     },
   });
 
-const ShellConfigSchema = z.object({
-  description: z.string().optional(),
-  command: z.string(),
-  quiet: z.boolean().optional().default(false),
-});
+const LinkConfigSchema = z
+  .record(z.string(), z.string())
+  .optional()
+  .default({});
 
-const PackageManagerConfigSchema = z.object({
-  // Important for Brew on MacOS
-  installSelf: z.boolean().optional().default(true),
-  dependenciesFile: z.string(),
-});
+const ShellConfigSchema = z
+  .array(
+    z.object({
+      description: z.string().optional(),
+      command: z.string(),
+      quiet: z.boolean().default(false),
+    }),
+  )
+  .default([]);
 
-// Define your config schema with Zod
-const ConfigSchema = z.object({
+const PackageManagerConfigSchema = z
+  .object({
+    installSelf: z.boolean().default(true),
+    dependenciesFile: z.string().default(""),
+  })
+  .default({
+    installSelf: true,
+    dependenciesFile: "",
+  });
+
+export const ConfigSchema = z.object({
   defaults: DefaultsConfig,
-  link: z.record(z.string(), z.string()),
-  shell: z.array(ShellConfigSchema),
+  link: LinkConfigSchema,
+  shell: ShellConfigSchema,
   packageManager: PackageManagerConfigSchema,
 });
 
@@ -82,11 +93,11 @@ const generateLinks = (config: Config): string => {
     output += `echo "Setting up: ${destination} -> ${source}"\n`;
 
     // Get the source path relative to the dotfiles directory
-    const sourcePath = `\$(pwd)/${source}`;
+    const sourcePath = `$(pwd)/${source}`;
 
     // Expand tilde in destination path
     const destPath = destination.startsWith("~")
-      ? `\$HOME${destination.slice(1)}`
+      ? `$HOME${destination.slice(1)}`
       : destination;
 
     // Check source exists in shell (better for runtime validation)
@@ -97,7 +108,7 @@ const generateLinks = (config: Config): string => {
 
     // Create parent directory if needed
     if (linkDefaults.create) {
-      output += `mkdir -p "\$(dirname "${destPath}")"\n`;
+      output += `mkdir -p "$(dirname "${destPath}")"\n`;
     }
 
     // Handle existing links/files
@@ -165,9 +176,13 @@ const generatePackageManager = (config: Config): string => {
   let output = "";
   const pkgMgr = config.packageManager;
 
+  if (!pkgMgr) {
+    return output;
+  }
+
   // Check if running on macOS
   output += `# Package Manager Setup\n`;
-  output += `if [[ "\$(uname)" == "Darwin" ]]; then\n`;
+  output += `if [[ "$(uname)" == "Darwin" ]]; then\n`;
 
   // Install Homebrew if needed
   if (pkgMgr.installSelf) {
@@ -177,7 +192,7 @@ const generatePackageManager = (config: Config): string => {
     output += `    echo "  ✓ Homebrew already installed"\n`;
     output += `  else\n`;
     output += `    echo "  Installing Homebrew..."\n`;
-    output += `    if /bin/bash -c "\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then\n`;
+    output += `    if /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then\n`;
     output += `      echo "  ✓ Homebrew installed successfully"\n`;
     output += `    else\n`;
     output += `      echo "  ✗ Error: Failed to install Homebrew"\n`;
@@ -188,8 +203,8 @@ const generatePackageManager = (config: Config): string => {
 
   // Install packages from Brewfile
   if (pkgMgr.dependenciesFile && pkgMgr.dependenciesFile.trim() !== "") {
-    const brewfilePath = `\$(pwd)/${pkgMgr.dependenciesFile}`;
-    
+    const brewfilePath = `$(pwd)/${pkgMgr.dependenciesFile}`;
+
     output += `  # Install packages from Brewfile\n`;
     output += `  if [ ! -e "${brewfilePath}" ]; then\n`;
     output += `    echo "  ✗ Error: Brewfile not found: ${pkgMgr.dependenciesFile}"\n`;
@@ -211,7 +226,8 @@ const generatePackageManager = (config: Config): string => {
 
 export const parseConfig = async (input: string, output: string) => {
   const configFile = Bun.file(input);
-  const rawConfig = await configFile.json();
+  const configStr = await configFile.text();
+  const rawConfig = Bun.YAML.parse(configStr);
 
   const config = ConfigSchema.parse(rawConfig);
 

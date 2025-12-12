@@ -139,27 +139,9 @@ if [[ "$(uname)" == "Darwin" ]]; then
   fi
 fi
 
-# Install Brew
-echo "Install Brew..."
-if command -v brew &>/dev/null || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; then
-  echo "  ✓ Install Brew completed"
-else
-  echo "  ✗ Error: Install Brew failed"
-  exit 1
-fi
-
-# Install Brew packages
-echo "Install Brew packages..."
-if brew bundle --file=./brew/Brewfile; then
-  echo "  ✓ Install Brew packages completed"
-else
-  echo "  ✗ Error: Install Brew packages failed"
-  exit 1
-fi
-
 # Set Fish as default shell
 echo "Set Fish as default shell..."
-if chsh -s $(which fish); then
+if echo $(which fish) | sudo tee -a /etc/shells && sudo chsh -s $(which fish); then
   echo "  ✓ Set Fish as default shell completed"
 else
   echo "  ✗ Error: Set Fish as default shell failed"
