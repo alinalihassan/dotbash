@@ -1,54 +1,36 @@
-[
-  {
-    "defaults": {
-      "link": {
-        "relink": true,
-        "force": true,
-        "create": true
-      },
-      "brewfile": {
-        "stdout": true,
-        "stderr": true,
-        "include": ["tap", "brew", "cask", "mas"]
-      },
-      "shell": {
-        "stdout": true,
-        "stderr": true,
-        "quiet": false
-      }
-    }
-  },
-  {
+{
+  "defaults": {
     "link": {
-      "~/.gitconfig": "git/.gitconfig",
-      "~/.gitignore_global": "git/.gitignore_global",
-      "~/.config/nvim": "nvim",
-      "~/.config/fish": "fish",
-      "~/.config/bat": "bat",
-      "~/.config/ghostty": "ghostty",
-      "~/.config/opencode/opencode.jsonc": "opencode/opencode.jsonc",
-      "~/Library/Application Support/lazygit/config.yml": "lazygit/config.yml"
+      "relink": true,
+      "force": true,
+      "create": true
     }
   },
-  {
-    "shell": [
-      {
-        "description": "Install Brew",
-        "command": "command -v brew &>/dev/null || /bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
-      },
-      {
-        "description": "Set Fish as default shell",
-        "command": "chsh -s $(which fish)"
-      },
-      {
-        "description": "Install Fish Plugins",
-        "command": "fish -c \"fisher update\""
-      }
-    ]
+  "link": {
+    "~/.gitconfig": "git/.gitconfig",
+    "~/.gitignore_global": "git/.gitignore_global",
+    "~/.config/nvim": "nvim",
+    "~/.config/fish": "fish",
+    "~/.config/bat": "bat",
+    "~/.config/ghostty": "ghostty",
+    "~/.config/opencode/opencode.jsonc": "opencode/opencode.jsonc",
+    "~/Library/Application Support/lazygit/config.yml": "lazygit/config.yml"
   },
-  {
-    "brewfile": {
-      "file": "brew/Brewfile"
+  "shell": [
+    {
+      "description": "Install Brew",
+      "command": "command -v brew &>/dev/null || /bin/bash -c \"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
+    },
+    {
+      "description": "Set Fish as default shell",
+      "command": "chsh -s $(which fish)"
+    },
+    {
+      "description": "Install Fish Plugins",
+      "command": "fish -c \"fisher update\""
     }
+  ],
+  "packageManager": {
+    "dependenciesFile": "brew/Brewfile"
   }
-]
+}
