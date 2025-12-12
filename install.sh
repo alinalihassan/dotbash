@@ -141,7 +141,10 @@ fi
 
 # Set Fish as default shell
 echo "Set Fish as default shell..."
-if echo $(which fish) | sudo tee -a /etc/shells && sudo chsh -s $(which fish); then
+if (FP=$(command -v fish)
+grep -Fxq "$FP" /etc/shells || echo "$FP" | sudo tee -a /etc/shells
+[ "$SHELL" = "$FP" ] || chsh -s "$FP" "$USER"
+); then
   echo "  ✓ Set Fish as default shell completed"
 else
   echo "  ✗ Error: Set Fish as default shell failed"
@@ -150,7 +153,7 @@ fi
 
 # Install Fish Plugins
 echo "Install Fish Plugins..."
-if fish -c "fisher update"; then
+if (fish -c "fisher update"); then
   echo "  ✓ Install Fish Plugins completed"
 else
   echo "  ✗ Error: Install Fish Plugins failed"

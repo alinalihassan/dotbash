@@ -24,6 +24,6 @@ shell:
   command: |
     FP=$(command -v fish)
     grep -Fxq "$FP" /etc/shells || echo "$FP" | sudo tee -a /etc/shells
-    [ "$SHELL" = "$FP" ] || sudo chsh -s "$FP"
+    [ "$SHELL" = "$FP" ] || chsh -s "$FP" "$USER"
 - description: Install Fish Plugins
   command: fish -c "fisher update"

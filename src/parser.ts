@@ -153,8 +153,9 @@ const generateShellCommands = (config: Config): string => {
       output += `echo "${description}..."\n`;
     }
 
-    // Run the command with error handling
-    output += `if ${command}; then\n`;
+     // Run the command with error handling
+     // Wrap in parentheses for proper bash execution
+     output += `if (${command}); then\n`;
 
     if (!quiet) {
       output += `  echo "  ✓ ${description} completed"\n`;
