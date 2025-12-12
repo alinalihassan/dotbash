@@ -2,6 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "properties": {
+    "$schema": {
+      "type": "string"
+    },
     "defaults": {
       "default": {
         "link": {
@@ -36,11 +39,7 @@
               "type": "boolean"
             }
           },
-          "required": [
-            "create",
-            "relink",
-            "force"
-          ],
+          "required": [],
           "additionalProperties": false
         },
         "shell": {
@@ -54,16 +53,11 @@
               "type": "boolean"
             }
           },
-          "required": [
-            "quiet"
-          ],
+          "required": [],
           "additionalProperties": false
         }
       },
-      "required": [
-        "link",
-        "shell"
-      ],
+      "required": [],
       "additionalProperties": false
     },
     "link": {
@@ -94,8 +88,7 @@
           }
         },
         "required": [
-          "command",
-          "quiet"
+          "command"
         ],
         "additionalProperties": false
       }
@@ -116,18 +109,10 @@
           "type": "string"
         }
       },
-      "required": [
-        "installSelf",
-        "dependenciesFile"
-      ],
+      "required": [],
       "additionalProperties": false
     }
   },
-  "required": [
-    "defaults",
-    "link",
-    "shell",
-    "packageManager"
-  ],
+  "required": [],
   "additionalProperties": false
 }

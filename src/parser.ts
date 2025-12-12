@@ -62,6 +62,7 @@ const PackageManagerConfigSchema = z
   });
 
 export const ConfigSchema = z.object({
+  $schema: z.string().optional(),
   defaults: DefaultsConfig,
   link: LinkConfigSchema,
   shell: ShellConfigSchema,
