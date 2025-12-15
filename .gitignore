@@ -1,5 +1,6 @@
 # Output folder
 build
+.pack-test
 
 # Testing files
 dotbash.yaml

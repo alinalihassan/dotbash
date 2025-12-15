@@ -1,6 +1,6 @@
 {
 	"name": "dotbash",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A lightweight dotfiles manager that generates self-contained shell scripts",
 	"author": "Alin Ali Hassan <hassanalinali@gmail.com>",
 	"license": "MIT",
@@ -13,9 +13,9 @@
 	},
 	"homepage": "https://github.com/alinalihassan/dotbash#readme",
 	"type": "module",
-	"main": "build/cli.js",
+	"main": "./build/cli.js",
 	"bin": {
-		"dotbash": "build/cli.js"
+		"dotbash": "./build/cli.js"
 	},
 	"files": [
 		"build",
